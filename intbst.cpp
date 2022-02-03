@@ -209,6 +209,7 @@ IntBST::Node *IntBST::getPredecessorNode(int value) const
     }
     else if(n->parent && n->parent->right == n)
         return n->parent;
+        
     else if(n->parent && n->parent->left == n) {
         Node* result = n->parent->parent;
         
@@ -225,6 +226,7 @@ IntBST::Node *IntBST::getPredecessorNode(int value) const
 int IntBST::getPredecessor(int value) const
 {
     Node* n = getPredecessorNode(value);
+    
     if(n)
         return n->info;
     return 0;
@@ -239,12 +241,28 @@ IntBST::Node *IntBST::getSuccessorNode(int value) const
     {
         return nullptr;
     }
-    Node*result = NULL;
+    else
     if(n->right)
+    {
+        Node*result = n->right;
+        
+        while(result->left)
+        {
+            result=result->left; 
+        }
+        return result;  
+    }
+   else if(n->parent && n->parent->left == n)
+        return n->parent;
+    else if(n->parent && n->parent->right == n) {
+        Node* result = n->parent->parent;
+        
+        if(result && result->info <=value)
+            result = nullptr;
+        return result;
+    }
     
-    
-
-    return NULL; // REPLACE THIS NON-SOLUTION
+    return nullptr; 
 }
 
 // returns the successor value of the given value or 0 if there is none
@@ -255,12 +273,41 @@ int IntBST::getSuccessor(int value) const
     {
         return n->info;
     } 
-    return 0;// REPLACE THIS NON-SOLUTION
+    return 0;
 }
 
 // deletes the Node containing the given value from the tree
 // returns true if the node exist and was deleted or false if the node does not exist
 bool IntBST::remove(int value)
 {
-    return false; // REPLACE THIS NON-SOLUTION
+    
+    if(contains(value))
+    {
+        Node* n = getNodeFor(value,root);
+        if(n->parent && n->parent->left == n)
+            n->parent->left = nullptr;
+        else if(n->parent && n->parent->right == n)
+            n->parent->right = nullptr;
+        else {
+            if(left)
+                root = n->left;
+            else if(right) 
+                root = n->right;                
+        
+
+        }
+        return true;
+    }
+    return false; 
+}
+
+void IntBST::removeHelper(Node* n) 
+{
+    if (n)
+    {
+        clear(n->left);
+        clear(n->right);
+        insert(n->info);
+        delete n;
+    }
 }
