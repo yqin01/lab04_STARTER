@@ -289,13 +289,20 @@ bool IntBST::remove(int value)
         else if(n->parent && n->parent->right == n)
             n->parent->right = nullptr;
         else {
-            if(left)
+            if(left) 
+            {
                 root = n->left;
+                n->left = nullptr;
+            }
             else if(right) 
-                root = n->right;                
-        
-
+            {
+                root = n->right;    
+                n->right = nullptr;
+            }                            
         }
+        removeHelper(n->left);
+        removeHelper(n->right);
+        delete n;
         return true;
     }
     return false; 
@@ -305,9 +312,9 @@ void IntBST::removeHelper(Node* n)
 {
     if (n)
     {
-        clear(n->left);
-        clear(n->right);
         insert(n->info);
+        removeHelper(n->left);
+        removeHelper(n->right);
         delete n;
     }
 }
